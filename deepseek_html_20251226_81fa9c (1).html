@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SecureSphere | Device Identity Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #0066FF;
+            --secondary-blue: #0047CC;
+            --dark-blue: #001A33;
+            --light-blue: #E6F0FF;
+            --accent-blue: #3399FF;
+            --gray-50: #F9FAFB;
+            --gray-100: #F3F4F6;
+            --gray-800: #1F2937;
+            --success-green: #10B981;
+            --warning-yellow: #F59E0B;
+            --tech-gradient: linear-gradient(135deg, #0066FF 0%, #0047CC 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e9f2 100%);
+            min-height: 100vh;
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .app-header {
+            background: white;
+            border-radius: 20px;
+            padding: 25px 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            width: 50px;
+            height: 50px;
+            background: var(--tech-gradient);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 22px;
+        }
+
+        .logo-text h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 4px;
+        }
+
+        .logo-text p {
+            color: #6B7280;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--tech-gradient);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 102, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-secondary:hover {
+            background: var(--light-blue);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+
+        /* Key Generation Card */
+        .key-generation-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+        }
+
+        .card-header {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .card-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--tech-gradient);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 30px;
+            color: white;
+        }
+
+        .card-header h2 {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+        }
+
+        .card-header p {
+            color: #6B7280;
+            font-size: 16px;
+        }
+
+        /* Key Display */
+        .key-display-container {
+            background: linear-gradient(135deg, var(--light-blue), #F0F7FF);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed var(--accent-blue);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-display-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--tech-gradient);
+        }
+
+        .key-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-value {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #E5E7EB;
+            text-align: center;
+            letter-spacing: 1px;
+            word-break: break-all;
+            margin: 15px 0;
+        }
+
+        .key-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+
+        .btn-key-action {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-copy {
+            background: var(--tech-gradient);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.2);
+        }
+
+        .btn-copy:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 102, 255, 0.3);
+        }
+
+        .btn-verify {
+            background: white;
+            color: var(--primary-blue);
+            border: 2px solid var(--primary-blue);
+        }
+
+        .btn-verify:hover {
+            background: var(--light-blue);
+        }
+
+        /* Device Info */
+        .device-info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+        }
+
+        .device-info-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            background: var(--gray-50);
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary-blue);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        .info-value {
+            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-size: 14px;
+            color: var(--gray-800);
+            word-break: break-all;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .security-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 102, 255, 0.1);
+            border: 1px solid rgba(0, 102, 255, 0.1);
+        }
+
+        .security-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .security-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        .security-feature:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .feature-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--light-blue);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary-blue);
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .feature-content h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark-blue);
+            margin-bottom: 5px;
+        }
+
+        .feature-content p {
+            font-size: 14px;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+
+        /* Statistics Card */
+        .stats-card {
+            background: var(--tech-gradient);
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+        }
+
+        .stats-card h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-item:last-child {
+            margin-bottom: 0;
+            padding-bottom: 0;
+            border-bottom: none;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Footer */
+        .app-footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #E5E7EB;
+            color: #6B7280;
+            font-size: 14px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .footer-links a {
+            color: var(--primary-blue);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 10px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: #6B7280;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .modal-close:hover {
+            color: var(--dark-blue);
+        }
+
+        .modal-body {
+            text-align: center;
+        }
+
+        .modal-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--tech-gradient);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 36px;
+            color: white;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-header {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+                padding: 25px;
+            }
+
+            .key-value {
+                font-size: 20px;
+                padding: 15px;
+            }
+
+            .key-actions {
+                flex-direction: column;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-section">
+                <div class="logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="logo-text">
+                    <h1>SecureSphere</h1>
+                    <p>Enterprise Device Identity Platform</p>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-secondary" onclick="showDocumentation()">
+                    <i class="fas fa-book"></i> Documentation
+                </button>
+                <button class="btn btn-primary" onclick="openVerifier()">
+                    <i class="fas fa-shield-alt"></i> Go to Verifier
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="key-generation-card">
+                <div class="card-header">
+                    <div class="card-icon">
+                        <i class="fas fa-microchip"></i>
+                    </div>
+                    <h2>Device Identity Generation</h2>
+                    <p>Generate a permanent hardware-based identity for your device</p>
+                </div>
+
+                <div class="key-display-container">
+                    <div class="key-label">
+                        <i class="fas fa-key"></i> Your Device Identity
+                    </div>
+                    <div class="key-value" id="deviceKey">IDV-XXXXXXXX-XXXX</div>
+                    <div class="key-actions">
+                        <button class="btn-key-action btn-copy" onclick="copyDeviceKey()">
+                            <i class="far fa-copy"></i> Copy Identity
+                        </button>
+                        <button class="btn-key-action btn-verify" onclick="openVerifierWithKey()">
+                            <i class="fas fa-check-circle"></i> Test Verification
+                        </button>
+                    </div>
+                </div>
+
+                <div class="device-info-card">
+                    <h3><i class="fas fa-laptop"></i> Device Fingerprint</h3>
+                    <div class="info-grid" id="deviceInfoGrid">
+                        <!-- Device info will be populated here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column (Sidebar) -->
+            <div class="sidebar">
+                <div class="security-card">
+                    <h3><i class="fas fa-lock"></i> Security Features</h3>
+                    <div class="security-feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-fingerprint"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Hardware Binding</h4>
+                            <p>Identity is permanently tied to your device hardware</p>
+                        </div>
+                    </div>
+                    <div class="security-feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-ban"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Cross-Device Protection</h4>
+                            <p>Identity cannot be used on different devices</p>
+                        </div>
+                    </div>
+                    <div class="security-feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-sync-alt"></i>
+                        </div>
+                        <div class="feature-content">
+                            <h4>Permanent Identity</h4>
+                            <p>Once generated, identity never changes for this device</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="stats-card">
+                    <h3><i class="fas fa-chart-line"></i> System Statistics</h3>
+                    <div class="stat-item">
+                        <div class="stat-label">Devices Secured</div>
+                        <div class="stat-value" id="securedCount">1</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Verifications</div>
+                        <div class="stat-value" id="verificationCount">0</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Security Level</div>
+                        <div class="stat-value">99.9%</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>© 2024 SecureSphere Technologies. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#" onclick="showPrivacyPolicy()">Privacy Policy</a>
+                <a href="#" onclick="showTerms()">Terms of Service</a>
+                <a href="#" onclick="showSupport()">Support</a>
+                <a href="#" onclick="showAbout()">About Us</a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('successModal')">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-check"></i>
+                </div>
+                <h3>Identity Generated Successfully</h3>
+                <p>Your device identity has been created</p>
+            </div>
+            <div class="modal-body">
+                <p>Your device identity has been generated and stored securely.</p>
+                <p class="key-value" style="margin: 20px 0; font-size: 18px;" id="modalKey"></p>
+                <p><strong>Important:</strong> This identity works ONLY on this device.</p>
+                <button class="btn btn-primary" style="margin-top: 25px;" onclick="closeModal('successModal')">
+                    Continue
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Advanced device fingerprinting function
+        function generateAdvancedDeviceFingerprint() {
+            try {
+                // Collect device information
+                const fingerprint = {
+                    userAgent: navigator.userAgent,
+                    platform: navigator.platform,
+                    languages: navigator.languages ? navigator.languages.join(',') : 'unknown',
+                    screen: `${screen.width}x${screen.height}@${screen.colorDepth}bit`,
+                    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    hardware: navigator.hardwareConcurrency || 'unknown',
+                    memory: navigator.deviceMemory || 'unknown',
+                    vendor: navigator.vendor || 'unknown',
+                    cookies: navigator.cookieEnabled,
+                    doNotTrack: navigator.doNotTrack || 'unspecified',
+                    plugins: navigator.plugins ? navigator.plugins.length : 0,
+                    touchPoints: navigator.maxTouchPoints || 0,
+                    canvasFingerprint: 'enabled',
+                    webglInfo: 'available'
+                };
+
+                // Add more unique identifiers
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                if (ctx) {
+                    ctx.textBaseline = 'top';
+                    ctx.font = '14px Arial';
+                    ctx.fillStyle = '#f60';
+                    ctx.fillRect(125, 1, 62, 20);
+                    ctx.fillStyle = '#069';
+                    ctx.fillText('SecureSphere', 2, 15);
+                    fingerprint.canvasHash = canvas.toDataURL().substring(22, 40);
+                }
+
+                // Create unique hash from fingerprint
+                const fingerprintString = JSON.stringify(fingerprint);
+                let hash = 5381;
+                
+                for (let i = 0; i < fingerprintString.length; i++) {
+                    hash = (hash * 33) ^ fingerprintString.charCodeAt(i);
+                }
+                
+                // Convert to positive hex and ensure proper length
+                const positiveHash = (hash >>> 0).toString(16).toUpperCase();
+                
+                // Pad with zeros if needed
+                const paddedHash = positiveHash.padStart(12, '0');
+                
+                // Format: IDV-XXXXXXXX-XXXX
+                const deviceId = `IDV-${paddedHash.substring(0, 8)}-${paddedHash.substring(8, 12)}`;
+                
+                return {
+                    id: deviceId,
+                    fingerprint: fingerprint,
+                    timestamp: new Date().toISOString(),
+                    version: '2.0'
+                };
+            } catch (error) {
+                console.error("Error generating fingerprint:", error);
+                // Fallback ID with timestamp
+                const timestamp = Date.now().toString(36).toUpperCase();
+                return {
+                    id: `IDV-FALLBACK-${timestamp.substring(0, 4)}`,
+                    fingerprint: { error: "Fingerprint generation failed" },
+                    timestamp: new Date().toISOString(),
+                    version: '1.0'
+                };
+            }
+        }
+
+        // Display device information
+        function displayDeviceInfo() {
+            try {
+                const deviceData = generateAdvancedDeviceFingerprint();
+                const deviceKey = deviceData.id;
+                
+                // Update key display
+                document.getElementById('deviceKey').textContent = deviceKey;
+                document.getElementById('modalKey').textContent = deviceKey;
+                
+                // Update device info grid
+                const infoGrid = document.getElementById('deviceInfoGrid');
+                const fingerprint = deviceData.fingerprint;
+                
+                const infoItems = [
+                    { label: 'Device ID', value: deviceKey },
+                    { label: 'Platform', value: fingerprint.platform },
+                    { label: 'Browser', value: fingerprint.userAgent.split(') ')[0].split('(')[1] || 'Unknown' },
+                    { label: 'Screen Resolution', value: fingerprint.screen },
+                    { label: 'Timezone', value: fingerprint.timezone },
+                    { label: 'CPU Cores', value: fingerprint.hardware },
+                    { label: 'System Memory', value: fingerprint.memory + ' GB' },
+                    { label: 'Generated', value: new Date().toLocaleString() }
+                ];
+                
+                infoGrid.innerHTML = infoItems.map(item => `
+                    <div class="info-item">
+                        <div class="info-label">${item.label}</div>
+                        <div class="info-value">${item.value}</div>
+                    </div>
+                `).join('');
+                
+                // Store in localStorage
+                localStorage.setItem('secureSphere_deviceData', JSON.stringify(deviceData));
+                localStorage.setItem('secureSphere_deviceKey', deviceKey);
+                
+                // Mark device as secured
+                localStorage.setItem('secureSphere_deviceGenerated', 'true');
+                
+                // Update statistics
+                updateStatistics();
+                
+                // Show success modal after delay
+                setTimeout(() => {
+                    showModal('successModal');
+                }, 500);
+                
+            } catch (error) {
+                console.error("Error displaying device info:", error);
+                document.getElementById('deviceKey').textContent = "IDV-ERROR-0000";
+                alert("Error generating device identity. Please refresh the page.");
+            }
+        }
+
+        // Copy device key to clipboard
+        function copyDeviceKey() {
+            try {
+                const deviceKey = document.getElementById('deviceKey').textContent;
+                navigator.clipboard.writeText(deviceKey).then(() => {
+                    // Visual feedback
+                    const btn = event.target.closest('.btn-key-action');
+                    const originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                    btn.style.background = 'linear-gradient(135deg, #10B981, #34D399)';
+                    
+                    setTimeout(() => {
+                        btn.innerHTML = originalHTML;
+                        btn.style.background = '';
+                    }, 2000);
+                }).catch(err => {
+                    console.error("Failed to copy:", err);
+                    alert("Failed to copy to clipboard. Please copy manually.");
+                });
+            } catch (error) {
+                console.error("Copy error:", error);
+            }
+        }
+
+        // Open verifier page
+        function openVerifier() {
+            try {
+                window.open('device-verifier.html', '_blank');
+            } catch (error) {
+                alert("Please allow pop-ups for this site");
+            }
+        }
+
+        // Open verifier with current key
+        function openVerifierWithKey() {
+            try {
+                const deviceKey = document.getElementById('deviceKey').textContent;
+                if (deviceKey && deviceKey.startsWith('IDV-')) {
+                    const verifierUrl = `device-verifier.html?key=${encodeURIComponent(deviceKey)}`;
+                    window.open(verifierUrl, '_blank');
+                } else {
+                    alert("Please generate a device identity first.");
+                }
+            } catch (error) {
+                console.error("Error opening verifier:", error);
+            }
+        }
+
+        // Modal functions
+        function showModal(modalId) {
+            try {
+                document.getElementById(modalId).style.display = 'flex';
+            } catch (error) {
+                console.error("Modal error:", error);
+            }
+        }
+
+        function closeModal(modalId) {
+            try {
+                document.getElementById(modalId).style.display = 'none';
+            } catch (error) {
+                console.error("Modal close error:", error);
+            }
+        }
+
+        // Update statistics
+        function updateStatistics() {
+            try {
+                const verificationCount = parseInt(localStorage.getItem('secureSphere_verificationCount') || '0');
+                document.getElementById('verificationCount').textContent = verificationCount;
+                
+                // Update secured devices count
+                let securedDevices = parseInt(localStorage.getItem('secureSphere_securedDevices') || '0');
+                if (securedDevices === 0) {
+                    securedDevices = 1;
+                    localStorage.setItem('secureSphere_securedDevices', '1');
+                }
+                document.getElementById('securedCount').textContent = securedDevices;
+            } catch (error) {
+                console.error("Statistics update error:", error);
+            }
+        }
+
+        // Info modal functions
+        function showDocumentation() {
+            alert('SecureSphere Documentation\n\n1. Device Identity: Unique hardware-based identifier\n2. Security: Cross-device protection\n3. Usage: One identity per device only');
+        }
+
+        function showPrivacyPolicy() {
+            alert('Privacy Policy\n\nWe do not collect personal data. All device information stays locally on your device.');
+        }
+
+        function showTerms() {
+            alert('Terms of Service\n\nFor enterprise use only. Unauthorized distribution prohibited.');
+        }
+
+        function showSupport() {
+            alert('Support: support@securesphere.tech\nPhone: 1-800-SECURE-IT');
+        }
+
+        function showAbout() {
+            alert('SecureSphere Technologies\nEnterprise Security Solutions\nVersion 2.1.0');
+        }
+
+        // Initialize on page load
+        window.onload = function() {
+            try {
+                // Check if already generated
+                const alreadyGenerated = localStorage.getItem('secureSphere_deviceGenerated');
+                
+                if (alreadyGenerated === 'true') {
+                    // Load existing data
+                    const storedData = localStorage.getItem('secureSphere_deviceData');
+                    if (storedData) {
+                        const deviceData = JSON.parse(storedData);
+                        document.getElementById('deviceKey').textContent = deviceData.id;
+                        document.getElementById('modalKey').textContent = deviceData.id;
+                        
+                        // Display stored info
+                        const infoGrid = document.getElementById('deviceInfoGrid');
+                        const fingerprint = deviceData.fingerprint;
+                        
+                        const infoItems = [
+                            { label: 'Device ID', value: deviceData.id },
+                            { label: 'Platform', value: fingerprint.platform },
+                            { label: 'Browser', value: fingerprint.userAgent.split(') ')[0].split('(')[1] || 'Unknown' },
+                            { label: 'Screen Resolution', value: fingerprint.screen },
+                            { label: 'Timezone', value: fingerprint.timezone },
+                            { label: 'CPU Cores', value: fingerprint.hardware },
+                            { label: 'Generated', value: new Date(deviceData.timestamp).toLocaleString() }
+                        ];
+                        
+                        infoGrid.innerHTML = infoItems.map(item => `
+                            <div class="info-item">
+                                <div class="info-label">${item.label}</div>
+                                <div class="info-value">${item.value}</div>
+                            </div>
+                        `).join('');
+                    }
+                } else {
+                    // Generate new identity
+                    displayDeviceInfo();
+                }
+                
+                updateStatistics();
+                
+                // Close modal when clicking outside
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                });
+                
+            } catch (error) {
+                console.error("Initialization error:", error);
+                document.getElementById('deviceKey').textContent = "IDV-LOAD-ERROR";
+            }
+        };
+    </script>
+</body>
+</html>
